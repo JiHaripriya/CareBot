@@ -1,0 +1,17 @@
+<form [formGroup]="form" class="col-md-12 bg-white p-2" (ngSubmit)="submit()">
+    <h3>Which title intruigues you the most?</h3> <hr>
+    <label *ngFor="let order of movies;" class="col">
+      <div class="form-group">
+        <input
+        formControlName="option"
+        type="radio"
+        [value]="order"
+        />
+        <span class="form-control">{{order}}</span>
+      </div>
+    </label>
+  
+    <div class="form-group">
+        <button class="btn btn-success align-self-center">Select</button>
+    </div>
+</form>
