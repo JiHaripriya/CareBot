@@ -1,8 +1,10 @@
 import { ViewEncapsulation } from '@angular/core';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { HttpService } from './http.service';
+import { SafePipe } from './safe.pipe';
 
 
 @Component({
@@ -39,7 +41,7 @@ export class AppComponent implements OnInit{
 
   recording = false;
 
-  constructor(private service: HttpService){}
+  constructor(private service: HttpService, private safe: SafePipe, private sanitizer: DomSanitizer){}
 
   ngOnInit() {
 
@@ -90,7 +92,7 @@ export class AppComponent implements OnInit{
               `
               <div class="p-2 bg-light text-success border border-default rounded shadow-sm"> ${place[0]} <br>
                 <span class="text-small"> There's more nearby!!</span> <br> ${place[1]}
-              </div> <br>
+              </div>
               `
             )
           }
@@ -111,6 +113,7 @@ export class AppComponent implements OnInit{
     setTimeout(() => {
       this.startNow = true
     }, 1500);
+
   }
 
   sendMessage(){
@@ -188,11 +191,44 @@ export class AppComponent implements OnInit{
     </div><hr>`)
   }
 
+  chunks:string[] = [];
+  mediaRecorder : any;
+
   startRecording() {
     this.recording = true;
+    navigator.mediaDevices.getUserMedia({audio: true})
+    .then(mediaStream => {
+      this.mediaRecorder = new MediaRecorder(mediaStream);
+      this.mediaRecorder.start();
+      console.log(this.mediaRecorder.state);
+      this.mediaRecorder.ondataavailable = (e: { [index:string]: any }) => {
+        this.chunks.push(e.data);
+      }
+    })
+    .catch(err => console.log(err.message));
   }
+
+  @ViewChild('chatBody') body!: ElementRef;
 
   stopRecording() {
     this.recording = false;
+    this.mediaRecorder.stop();
+    console.log(this.mediaRecorder.state);
+    
+    this.mediaRecorder.onstop = () => {
+      let blob = new Blob(this.chunks, {'type': 'audio/wav'});
+
+      let audioUrl = URL.createObjectURL(blob);
+      console.log(this.chunks)
+
+      this.body.nativeElement.insertAdjacentHTML('beforeend', `<div class="row justify-content-end bg-white">
+      <div class="talk-bubble tri-right btm-right shadow-sm">
+        <audio controls src="${audioUrl}" type="audio/wav" class="m-2"></audio>
+      </div>
+      </div>`)
+
+      this.chunks = [];
+    }
+  
   }
 }
