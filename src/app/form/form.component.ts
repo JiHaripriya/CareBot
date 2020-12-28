@@ -51,14 +51,13 @@ export class FormComponent implements OnInit, OnDestroy {
           this.movie_list.push(decodeURI(JSON.parse(res)[each]))
         }
         this.service.movieRecommendationData.next(this.movie_list);
+        console.log(this.movie_list)
       }
     )
     
     this.service.getLocation(String(this.emotion)).subscribe(
       loc => {
-        console.log(loc)
         this.location = JSON.parse(loc)
-        console.log(this.location);
         this.service.locationRecommendation.next(this.location);
       }
     )

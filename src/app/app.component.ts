@@ -73,42 +73,40 @@ export class AppComponent implements OnInit{
       }
     )
 
-    setTimeout(() => {
-      this.service.locationRecommendation.subscribe(
-        (site: {[index:string]:any}) => {
-          const template = []
-          for(let p in site) {
-            let place = String(site[p]).split(" :")
-            if(place[1].includes("None")){
-              template.push(
-                `
-                <span class="p-2 bg-light text-success border border-default rounded shadow-sm"> ${place[0]} </span> <br>
-                `
-              )
-            }
-            else {
-              template.push(
-                `
-                <div class="p-2 bg-light text-success border border-default rounded shadow-sm"> ${place[0]} <br>
-                  <span class="text-small"> There's more nearby!!</span> <br> ${place[1]}
-                </div> <br>
-                `
-              )
-            }
+    this.service.locationRecommendation.subscribe(
+      (site: {[index:string]:any}) => {
+        const template = []
+        for(let p in site) {
+          let place = String(site[p]).split(" :")
+          if(place[1].includes("None")){
+            template.push(
+              `
+              <span class="p-2 bg-light text-success border border-default rounded shadow-sm"> ${place[0]} </span> <br>
+              `
+            )
           }
-  
-          this.replies.push( `
-          <div class="row">
-            <div class="talk-bubble tri-right left-top bg-success shadow-sm">
-              <div class="talktext">
-                <p>Try the following places! </p> <br>
-                ${template.join('<br/>')}
-              </div>
-            </div>
-          </div>`)
+          else {
+            template.push(
+              `
+              <div class="p-2 bg-light text-success border border-default rounded shadow-sm"> ${place[0]} <br>
+                <span class="text-small"> There's more nearby!!</span> <br> ${place[1]}
+              </div> <br>
+              `
+            )
+          }
         }
-      )
-    }, 4000)
+
+        this.replies.push( `
+        <div class="row">
+          <div class="talk-bubble tri-right left-top bg-success shadow-sm">
+            <div class="talktext">
+              <p>Try the following places! </p> <br>
+              ${template.join('<br/>')}
+            </div>
+          </div>
+        </div>`)
+      }
+    )
 
     setTimeout(() => {
       this.startNow = true
