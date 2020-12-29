@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams  } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams  } from '@angular/common/http';
 import { Subject } from 'rxjs';
 
 @Injectable({
@@ -11,6 +11,7 @@ export class HttpService {
   genre = 'http://localhost:3000/movieProcess'
   movies = 'http://localhost:3000/movieRecommendation'
   location = 'http://localhost:3000/location'
+  voice = 'http://localhost:3000/api/test'
 
   emotionResult = '';
   mapping: {[index : string]: string} = {
@@ -63,5 +64,23 @@ export class HttpService {
 
   fetchEmotion() {
     return String(localStorage.getItem("emotion"));
+  }
+
+  sendVoiceInput(voiceInput: any) {
+    
+    new Response(voiceInput).arrayBuffer()
+    .then((res) => {
+      const data =  new Uint8Array(res);
+      console.log(data)     
+      let headers = new HttpHeaders();
+      headers = headers.set('Content-Type', 'application/text; charset=utf-8');
+      let params = new HttpParams().set('voice', "26,69,223,163,159,66");
+      this.httpClient.get(this.voice, {params: params})
+      .subscribe(res => {
+        console.log(res)
+
+      })
+    })
+    .catch(err => console.log(err))
   }
 }

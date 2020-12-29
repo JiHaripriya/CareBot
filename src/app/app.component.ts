@@ -5,7 +5,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { HttpService } from './http.service';
 import { SafePipe } from './safe.pipe';
-
+import * as fs from 'fs';
+import { type } from 'os';
 
 @Component({
   selector: 'app-root',
@@ -216,16 +217,24 @@ export class AppComponent implements OnInit{
     console.log(this.mediaRecorder.state);
     
     this.mediaRecorder.onstop = () => {
-      let blob = new Blob(this.chunks, {'type': 'audio/wav'});
+
+      let blob = new Blob(this.chunks, {'type': "audio/webm;codecs=opus"});
 
       let audioUrl = URL.createObjectURL(blob);
-      console.log(this.chunks)
 
       this.body.nativeElement.insertAdjacentHTML('beforeend', `<div class="row justify-content-end bg-white">
       <div class="talk-bubble tri-right btm-right shadow-sm">
         <audio controls src="${audioUrl}" type="audio/wav" class="m-2"></audio>
       </div>
       </div>`)
+
+      var a = document.createElement("a");
+      a.href = audioUrl;
+      a.download = new Date().toISOString() + '.webm';
+      // start download
+      a.click();
+
+      // this.service.sendVoiceInput(SEND FILE PATH);
 
       this.chunks = [];
     }
