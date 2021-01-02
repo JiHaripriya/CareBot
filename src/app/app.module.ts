@@ -5,7 +5,6 @@ import { AppComponent } from './app.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { FormComponent } from './form/form.component';
-import { SafePipe } from './safe.pipe';
 
 @NgModule({
   declarations: [
@@ -18,7 +17,7 @@ import { SafePipe } from './safe.pipe';
     ReactiveFormsModule,
     HttpClientModule
   ],
-  providers: [SafePipe],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

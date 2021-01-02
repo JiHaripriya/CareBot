@@ -12,6 +12,7 @@ export class HttpService {
   movies = 'http://localhost:3000/movieRecommendation'
   location = 'http://localhost:3000/location'
   voice = 'http://localhost:3000/api/test'
+  songlist = 'http://localhost:3000/songProcess'
 
   emotionResult = '';
   mapping: {[index : string]: string} = {
@@ -26,6 +27,7 @@ export class HttpService {
   chatBodyDisplay = new Subject<number>();
   movieRecommendationData = new Subject<string[]>();
   locationRecommendation = new Subject<{[index:string]:any}>();
+  songRecommendation = new Subject<{[index:string]:any}>();
   
 
   constructor(private httpClient: HttpClient) {   
@@ -66,21 +68,13 @@ export class HttpService {
     return String(localStorage.getItem("emotion"));
   }
 
-  sendVoiceInput(voiceInput: any) {
-    
-    new Response(voiceInput).arrayBuffer()
-    .then((res) => {
-      const data =  new Uint8Array(res);
-      console.log(data)     
-      let headers = new HttpHeaders();
-      headers = headers.set('Content-Type', 'application/text; charset=utf-8');
-      let params = new HttpParams().set('voice', "26,69,223,163,159,66");
-      this.httpClient.get(this.voice, {params: params})
-      .subscribe(res => {
-        console.log(res)
+  getSongList(emotion:string) {
+    let params = new HttpParams().set('emotion', emotion);
+    return this.httpClient.get(this.songlist, {params: params, responseType: 'text'});
+  }
 
-      })
-    })
-    .catch(err => console.log(err))
+  sendVoiceInput(voiceInput: any) {
+    let params = new HttpParams().set('voice', voiceInput);
+    return this.httpClient.get(this.voice, {params: params, responseType: 'text'})
   }
 }
